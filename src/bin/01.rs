@@ -20,6 +20,9 @@ pub fn part_one(input: &str) -> Option<u64> {
     let mut next_pos: i32;
     let mut out: u64 = 0;
     for rot in rot_slice {
+        if rot == 0 {
+            continue;
+        }
         next_pos = (current_pos + rot) % DIAL_SIZE;
         if next_pos == 0 {
             out += 1;
@@ -44,16 +47,42 @@ pub fn part_two(input: &str) -> Option<u64> {
     // +  45 =  100/100 =       1  :: 0    => 5
     // -  55 =  -10/100 =       1  :: 90   => 6
     // - 210 = -120/100 =       2  :: 80   => 8
+    // -  80 =    0/100 =       1  :: 0    => 9
+    // + 200 =  200/100 =       2  :: 0    => 11
+    // - 200 = -200/100 =       2  :: 0    => 13
+    // +  45 =   45/100 =       0  :: 45   => 13
+    // + 445 =  490/100 =       4  :: 90   => 17
+    // - 990 = -900/100 =      10  :: 0    => 27
+    // +  45 =   45/100 =       0  :: 45   => 27
+    // - 445 = -400/100 =       4  :: 90   => 17
+    // - 160 =  -50/100 =       1  :: 50   =>  18
+    // -  51 =   -1/100 =       1  :: 99   =>  19
+
     let rot_slice = input_as_i32_slice(input);
     let mut current_pos: i32 = START_POS;
-    let mut next_pos: i32;
     let mut out: u64 = 0;
+    let mut cur_rots: u64;
+    let mut next_pos: i32;
     for rot in rot_slice {
-        next_pos = current_pos + rot;
-        if next_pos < 0 {
-            out = out + 1;
+        if rot == 0 {
+            // dont waste cycles on this
+            continue;
         }
-        out = out + ((next_pos / DIAL_SIZE).abs() as u64);
+        next_pos = current_pos + rot;
+
+        // count number of rotations
+        cur_rots = (next_pos / DIAL_SIZE).abs() as u64;
+
+        if next_pos < 0 {
+            // Add 1 for negative because of the above op
+            cur_rots = cur_rots + 1;
+        }
+        if (current_pos == 0) && (next_pos==0){
+            // If it starts and ends at zeros.
+            // It ticks one less.
+            cur_rots = cur_rots - 1;
+        }
+        out = out + cur_rots;
         current_pos = next_pos.rem_euclid(DIAL_SIZE);
     }
     return Some(out);
