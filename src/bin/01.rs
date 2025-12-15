@@ -1,24 +1,24 @@
 advent_of_code::solution!(1);
-const DIAL_SIZE: i64 = 100;
-const START_POS: i64 = 50;
+const DIAL_SIZE: i32 = 100;
+const START_POS: i32 = 50;
 
-pub fn input_as_i64_slice(input: &str) -> Vec<i64> {
+pub fn input_as_i32_slice(input: &str) -> Vec<i32> {
     input
         .split_whitespace()
         .map(|x| {
             x.replace("R", "")
                 .replace("L", "-")
-                .parse::<i64>()
+                .parse::<i32>()
                 .expect("Something is off")
         })
         .collect()
 }
 
-pub fn part_one(input: &str) -> Option<i64> {
-    let rot_slice = input_as_i64_slice(input);
-    let mut current_pos: i64 = START_POS;
-    let mut next_pos: i64;
-    let mut out: i64 = 0;
+pub fn part_one(input: &str) -> Option<u64> {
+    let rot_slice = input_as_i32_slice(input);
+    let mut current_pos: i32 = START_POS;
+    let mut next_pos: i32;
+    let mut out: u64 = 0;
     for rot in rot_slice {
         if rot == 0 {
             continue;
@@ -32,7 +32,7 @@ pub fn part_one(input: &str) -> Option<i64> {
     return Some(out);
 }
 
-pub fn part_two(input: &str) -> Option<i64> {
+pub fn part_two(input: &str) -> Option<u64> {
     // Answer too HIGH?!
 
     // Outline
@@ -58,29 +58,34 @@ pub fn part_two(input: &str) -> Option<i64> {
     // - 160 =  -50/100 =       1  :: 50   =>  18
     // -  51 =   -1/100 =       1  :: 99   =>  19
 
-    let rot_slice = input_as_i64_slice(input);
-    let mut current_position: i64 = START_POS;
-    let mut total_zero_crossings: i64 = 0;
-    let mut current_zero_crossing: i64;
-    for rotation in rot_slice {
-        if rotation == 0 {
+    let rot_slice = input_as_i32_slice(input);
+    let mut current_pos: i32 = START_POS;
+    let mut out: u64 = 0;
+    let mut cur_rots: u64;
+    let mut next_pos: i32;
+    for rot in rot_slice {
+        if rot == 0 {
             // dont waste cycles on this
             continue;
         }
+        next_pos = current_pos + rot;
 
-        // Count just the full circle first. i.e. /100
-        current_zero_crossing = ((rotation + current_position).abs()) / DIAL_SIZE;
+        // count number of rotations
+        cur_rots = (next_pos / DIAL_SIZE).abs() as u64;
 
-        // Special cases for zero crossing in counter-clockwise
-        if (current_position != 0) && (current_position <= (-rotation)) {
-            current_zero_crossing = current_zero_crossing + 1;
+        if next_pos < 0 {
+            // Add 1 for negative because of the above op
+            cur_rots = cur_rots + 1;
         }
-
-        total_zero_crossings = total_zero_crossings + current_zero_crossing;
-
-        current_position = (current_position + rotation).rem_euclid(DIAL_SIZE);
+        if (current_pos == 0) && (next_pos==0){
+            // If it starts and ends at zeros.
+            // It ticks one less.
+            cur_rots = cur_rots - 1;
+        }
+        out = out + cur_rots;
+        current_pos = next_pos.rem_euclid(DIAL_SIZE);
     }
-    return Some(total_zero_crossings);
+    return Some(out);
 }
 
 #[cfg(test)]

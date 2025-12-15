@@ -111,7 +111,7 @@ pub fn get_sum_of_invalid_ids_for_range(input_range: (u64, u64)) -> u64 {
 pub fn part_one(input: &str) -> Option<u64> {
     let mut grand_total: u64 = 0;
     for _range in parse_input(input) {
-        let valid_ones = split_into_valid_ranges(_range, true);
+        let valid_ones = split_into_valid_ranges((_range(0), _range(1)), true);
         if valid_ones.is_none() {
             continue;
         } else {
