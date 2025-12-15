@@ -1,4 +1,19 @@
 advent_of_code::solution!(3);
+fn best_face_value(number: Vec<u8>, face_value: u8) -> (u8, u8) {
+    // Find the best face_value in the given range of numbers
+    let (mut max_index, mut max_value) = (usize::MAX, u8::MIN);
+    let right_limit = number.len() - face_value as usize;
+    for (index, digit) in number[..=right_limit].iter().enumerate() {
+        if *digit > max_value {
+            max_value = *digit;
+            max_index = index;
+        }
+    }
+    (max_index as u8, max_value)
+}
+fn largest_joltage_overpowered(number: Vec<u8>, req_length: u8) {
+    // Recursively find best for the given req_length
+}
 
 fn largest_joltage(number: Vec<u8>) -> u8 {
     // Go in reverse and find the following with the indices:
@@ -46,6 +61,11 @@ pub fn part_two(_input: &str) -> Option<u64> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_best_face_value() {
+        assert_eq!(best_face_value(vec![1, 2, 3, 4, 5, 6], 2), (3, 4));
+    }
 
     #[test]
     fn test_largest_joltage() {
