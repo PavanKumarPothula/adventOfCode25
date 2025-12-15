@@ -1,19 +1,11 @@
 use std::{cmp, u64};
 advent_of_code::solution!(2);
 
-pub fn parse_input(input: &str) -> Vec<(u64, u64)> {
-    {
-        input
-            .split(',')
-            .map(|pair| {
-                let mut splits = pair.split('-');
-                (
-                    splits.next().unwrap().parse::<u64>().unwrap(),
-                    splits.next().unwrap().parse::<u64>().unwrap(),
-                )
-            })
-            .collect()
-    }
+pub fn parse_input(input: &str) -> Vec<Vec<u64>> {
+    input
+        .split(',')
+        .map(|pair| pair.split('-').map(|x| x.parse::<u64>().unwrap()).collect())
+        .collect()
 }
 
 pub fn split_into_valid_ranges(
