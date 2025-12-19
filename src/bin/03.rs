@@ -1,6 +1,6 @@
 #![allow(unused)]
 advent_of_code::solution!(3);
-fn best_face_value(number: Vec<u8>, face_value: u8) -> (usize, u8) {
+fn best_face_value(number: &[u8], face_value: u8) -> (usize, u8) {
     // Find the best face_value in the given range of numbers
     let (mut max_index, mut max_value) = (usize::MAX, u8::MIN);
     let right_limit = number.len() - face_value as usize;
@@ -13,14 +13,13 @@ fn best_face_value(number: Vec<u8>, face_value: u8) -> (usize, u8) {
     (max_index, max_value)
 }
 
-fn largest_joltage_overpowered(mut number: Vec<u8>, req_length: u8) -> u64 {
+fn largest_joltage_overpowered(mut number: &[u8], req_length: u8) -> u64 {
     // Recursively find best for the given req_length
     let mut output_vec: Vec<u8> = Vec::with_capacity(req_length as usize);
-    let mut truncated_number = number.clone();
     let (mut out_index, mut out_best_value): (usize, u8);
     for i in (0..(req_length - 1)).rev() {
-        (out_index, out_best_value) = best_face_value(truncated_number, i);
-        truncated_number.drain(..out_index);
+        (out_index, out_best_value) = best_face_value(number, i);
+        number = &number[..out_index];
         output_vec.push(out_best_value);
     }
     0_u64
@@ -75,8 +74,8 @@ mod tests {
 
     #[test]
     fn test_best_face_value() {
-        assert_eq!(best_face_value(vec![1, 2, 3, 4, 5, 6], 2), (3, 4));
-        assert_eq!(best_face_value(vec![1, 2, 3], 2), (0, 1));
+        assert_eq!(best_face_value(&[1, 2, 3, 4, 5, 6], 2), (3, 4));
+        assert_eq!(best_face_value(&[1, 2, 3], 2), (0, 1));
     }
 
     #[test]
