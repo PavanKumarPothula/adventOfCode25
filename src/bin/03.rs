@@ -15,14 +15,17 @@ fn best_face_value(number: &[u8], face_value: u8) -> (usize, u8) {
 
 fn largest_joltage_overpowered(mut number: &[u8], req_length: u8) -> u64 {
     // Recursively find best for the given req_length
-    let mut output_vec: Vec<u8> = Vec::with_capacity(req_length as usize);
+    let mut ret: u64 = 0;
     let (mut out_index, mut out_best_value): (usize, u8);
-    for i in (0..(req_length - 1)).rev() {
+    println!("incoming number: {:?}", number);
+    for i in (0_u8..(req_length - 1)).rev() {
         (out_index, out_best_value) = best_face_value(number, i);
-        number = &number[..out_index];
-        output_vec.push(out_best_value);
+        // format!("For number: {number}");
+        println!("index: {out_index} :: best_value: {out_best_value}");
+        number = &number[out_index..];
+        ret += 10_u64.pow(i.into()) * out_best_value as u64;
     }
-    0_u64
+    ret
 }
 
 fn largest_joltage(number: Vec<u8>) -> u8 {
@@ -76,6 +79,12 @@ mod tests {
     fn test_best_face_value() {
         assert_eq!(best_face_value(&[1, 2, 3, 4, 5, 6], 2), (3, 4));
         assert_eq!(best_face_value(&[1, 2, 3], 2), (0, 1));
+    }
+
+    #[test]
+    fn test_largest_joltage_overpowered() {
+        assert_eq!(largest_joltage_overpowered(&[1, 2, 5, 1, 6, 1, 8], 2), 68);
+        assert_eq!(largest_joltage_overpowered(&[1, 2, 3, 1], 2), 31);
     }
 
     #[test]
