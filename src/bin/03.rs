@@ -17,12 +17,12 @@ fn largest_joltage_overpowered(mut number: &[u8], req_length: u8) -> u64 {
     // Recursively find best for the given req_length
     let mut ret: u64 = 0;
     let (mut out_index, mut out_best_value): (usize, u8);
-    println!("incoming number: {:?}", number);
-    for i in (0_u8..(req_length - 1)).rev() {
+    // println!("incoming number: {:?}", number);
+    for i in (0_u8..req_length).rev() {
         (out_index, out_best_value) = best_face_value(number, i);
         // format!("For number: {number}");
-        println!("index: {out_index} :: best_value: {out_best_value}");
-        number = &number[out_index..];
+        // println!("index: {out_index} :: best_value: {out_best_value}");
+        number = &number[out_index + 1..];
         ret += 10_u64.pow(i.into()) * out_best_value as u64;
     }
     ret
@@ -67,8 +67,18 @@ pub fn part_one(input: &str) -> Option<u64> {
     }))
 }
 
-pub fn part_two(_input: &str) -> Option<u64> {
-    None
+#[rustfmt::skip]
+pub fn part_two(input: &str) -> Option<u64> {
+    Some(input
+        .lines()
+        .fold(0_u64,|sum:u64, line|
+        sum + largest_joltage_overpowered(line
+            .bytes()
+            .map(|digit|
+                digit - b'0'
+            )
+        .collect::<Vec<u8>>().as_slice(), 12_u8)
+        ))
 }
 
 #[cfg(test)]
@@ -101,6 +111,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(3121910778619));
     }
 }
